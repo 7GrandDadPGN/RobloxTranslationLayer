@@ -55,7 +55,7 @@ function handler:start(main)
 				item = items[slot - 8]
 			end
 
-			if item then 
+			if item then
 				Client:Get('DropItem'):CallServer({
 					item = item.tool,
 					amount = mouseButton == 1 and item.amount or nil

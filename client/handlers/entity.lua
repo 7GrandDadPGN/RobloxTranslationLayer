@@ -95,11 +95,11 @@ local function unitVector(vec, mul)
 end
 
 local function addEntityType(tag, id)
-	for _, item in collectionService:GetTagged(tag) do 
-		handler:addEntity(item:IsA('Model') and item.PrimaryPart or item, id) 
+	for _, item in collectionService:GetTagged(tag) do
+		handler:addEntity(item:IsA('Model') and item.PrimaryPart or item, id)
 	end
-	collectionService:GetInstanceAddedSignal(tag):Connect(function(item) 
-		handler:addEntity(item:IsA('Model') and item.PrimaryPart or item, id) 
+	collectionService:GetInstanceAddedSignal(tag):Connect(function(item)
+		handler:addEntity(item:IsA('Model') and item.PrimaryPart or item, id)
 	end)
 end
 
@@ -145,7 +145,7 @@ function handler:start(main)
 				else
 					return
 				end
-            end
+			end
 
 			if not lagbacked then
 				root.CFrame = ent.lastPos and ent.lastPos:Lerp(ent.pos, math.clamp((tick() - ent.delta) / 0.05, 0, 1)) or ent.pos
@@ -164,13 +164,13 @@ function handler:start(main)
 		addEntityType('tnt', 50)
 		workspace.ChildAdded:Connect(function(obj)
 			if obj:IsA('Model') and obj.PrimaryPart then
-				if obj.Name == 'fireball' then 
+				if obj.Name == 'fireball' then
 					self:addEntity(obj.PrimaryPart, 63)
-				elseif obj.Name == 'telepearl' then 
+				elseif obj.Name == 'telepearl' then
 					self:addEntity(obj.PrimaryPart, 65)
-				elseif obj.Name:find('snowball') then 
+				elseif obj.Name:find('snowball') then
 					self:addEntity(obj.PrimaryPart, 61)
-				elseif obj.Name:find('arrow') then 
+				elseif obj.Name:find('arrow') then
 					self:addEntity(obj.PrimaryPart, 60)
 				end
 			end
@@ -179,12 +179,12 @@ function handler:start(main)
 		local chests = {}
 		if self.settings.chestStealer then
 			chests = collectionService:GetTagged('chest')
-			collectionService:GetInstanceAddedSignal('chest'):Connect(function(obj) 
+			collectionService:GetInstanceAddedSignal('chest'):Connect(function(obj)
 				table.insert(chests, obj)
 			end)
-			collectionService:GetInstanceRemovedSignal('chest'):Connect(function(obj) 
+			collectionService:GetInstanceRemovedSignal('chest'):Connect(function(obj)
 				local ind = table.find(chests, obj)
-				if ind then 
+				if ind then
 					table.remove(chests, ind)
 				end
 			end)
@@ -203,11 +203,11 @@ function handler:start(main)
 
 				if root and ent.spawnType == 2 then
 					if self.settings.autoPickup then
-						if isnetworkowner and isnetworkowner(ent.root) then 
+						if isnetworkowner and isnetworkowner(ent.root) then
 							ent.root.CFrame = root.CFrame - Vector3.new(0, 2, 0)
 						end
-						
-						if (root.Position - ent.root.Position).Magnitude < 10 then 
+
+						if (root.Position - ent.root.Position).Magnitude < 10 then
 							task.spawn(function()
 								Client:Get('PickupItemDrop'):CallServerAsync({
 									itemDrop = ent.root
@@ -217,7 +217,7 @@ function handler:start(main)
 					end
 				end
 
-				if self.loggedin then 
+				if self.loggedin then
 					if world:isInLoaded(ent.root.Position / 3) and not self.resync then
 						ent:spawn()
 						if moved or movedAim then
@@ -235,7 +235,7 @@ function handler:start(main)
 			end
 
 			self.resync = false
-			if root then 
+			if root then
 				for _, v in chests do
 					if (root.Position - v.Position).Magnitude <= 18 then
 						lootChest(v:FindFirstChild('ChestFolderValue'))
@@ -244,7 +244,7 @@ function handler:start(main)
 			end
 
 			local newSpeed = math.max(getSpeed(), 23)
-			if newSpeed ~= self.speed then 
+			if newSpeed ~= self.speed then
 				send('speed', newSpeed)
 				self.speed = newSpeed
 			end
@@ -273,7 +273,7 @@ function handler:convert(pos, spawnType)
 end
 
 function handler:removeEntity(id)
-	if self.entityThreads[id] then 
+	if self.entityThreads[id] then
 		task.cancel(self.entityThreads[id])
 	end
 
@@ -286,13 +286,13 @@ function handler:removeEntity(id)
 end
 
 function handler:addPlayer(plr: Player)
-	if plr.Character then 
-		self:addPlayerEntity(plr, plr.Character) 
+	if plr.Character then
+		self:addPlayerEntity(plr, plr.Character)
 	end
 
-	plr.CharacterAdded:Connect(function(char) 
+	plr.CharacterAdded:Connect(function(char)
 		self:removeEntity(plr)
-		self:addPlayerEntity(plr, char) 
+		self:addPlayerEntity(plr, char)
 	end)
 
 	plr.CharacterRemoving:Connect(function(char)
@@ -305,21 +305,21 @@ function handler:addPlayerEntity(plr: Player, char: Model)
 		local hum = char:WaitForChild('Humanoid', 10)
 		local head = char:WaitForChild('Head', 10)
 		local humrootpart
-		if hum then 
+		if hum then
 			local timeout = tick() + 10
 			repeat task.wait() until hum.RootPart or timeout < tick()
 			humrootpart = hum.RootPart
 		end
 		local inv = {
-			char:WaitForChild('ArmorInvItem_0', 5), 
-			char:WaitForChild('ArmorInvItem_1', 5), 
-			char:WaitForChild('ArmorInvItem_2', 5), 
+			char:WaitForChild('ArmorInvItem_0', 5),
+			char:WaitForChild('ArmorInvItem_1', 5),
+			char:WaitForChild('ArmorInvItem_2', 5),
 			char:WaitForChild('HandInvItem', 5)
 		}
 		local animator = hum and hum:WaitForChild('Animator', 3)
 
 		local id = tablist:findPlayer(plr)
-		if not id then 
+		if not id then
 			repeat
 				id = tablist:findPlayer(plr)
 				task.wait(1)
@@ -387,7 +387,7 @@ function handler:addPlayerEntity(plr: Player, char: Model)
 					for i, v in inv do
 						local equipId = i == 4 and 0 or 6 - (i + 1)
 						v.Changed:Connect(function()
-							if entity.spawned then 
+							if entity.spawned then
 								send('entity_equipment', id, equipId, v.Value and {itemType = v.Value.Name, amount = v.Value:GetAttribute('Amount')} or nil)
 							end
 						end)
@@ -397,14 +397,14 @@ function handler:addPlayerEntity(plr: Player, char: Model)
 
 			char:GetAttributeChangedSignal('Health'):Connect(function()
 				local newHp = math.max((char:GetAttribute('Health') or 100) / 5, 0)
-				if entity.delta or entity.spawned then 
+				if entity.delta or entity.spawned then
 					if newHp < entity.health then
 						send('entity_status', entity.id, 2)
 						if not entity.delta then
 							send('play_sound', newHp == 0 and 'game.player.die' or 'game.player.hurt', self:convert(entity.root.Position, -1) / 32, 1, (math.random() - math.random()) * 0.2 + 1)
 						end
 					end
-	
+
 					send(entity.delta and 'health' or 'entity_health', entity.id, newHp)
 				end
 				entity.health = newHp
@@ -415,8 +415,8 @@ function handler:addPlayerEntity(plr: Player, char: Model)
 end
 
 local function getNewEntityId()
-	for i = 101, 65535 do 
-		if not handler.entityIds[i] then 
+	for i = 101, 65535 do
+		if not handler.entityIds[i] then
 			return i
 		end
 	end
@@ -434,12 +434,12 @@ function handler:addEntity(obj, spawnType)
 		root = obj,
 		spawnType = spawnType
 	}
-	if not entity.id then 
+	if not entity.id then
 		return
 	end
 
 	function entity:spawn()
-		if not self.spawned then 
+		if not self.spawned then
 			self.spawned = true
 			send('entity_spawn', self.id, spawnType, self.pos, self.yaw)
 			handler:handleEntityMetadata(self)
@@ -448,13 +448,13 @@ function handler:addEntity(obj, spawnType)
 
 	self.entities[obj] = entity
 	self.entityIds[entity.id] = true
-	if self.loggedin then 
+	if self.loggedin then
 		entity:spawn()
 	end
 
 	obj.AncestryChanged:Connect(function(_, parent)
 		if parent == nil and self.entities[obj] then
-			if spawnType == 2 and self.lchar.pos and (self.lchar.pos.Position - obj.Position).Magnitude < 10 then 
+			if spawnType == 2 and self.lchar.pos and (self.lchar.pos.Position - obj.Position).Magnitude < 10 then
 				send('collect', entity.id)
 			end
 			send('entity_remove', entity.id)
@@ -468,7 +468,7 @@ function handler:addLightning(pos)
 	local entity = {
 		id = getNewEntityId()
 	}
-	if not entity.id then 
+	if not entity.id then
 		return
 	end
 
@@ -499,16 +499,16 @@ function handler:handleUseItem()
 	if meta then
 		if meta.consumable then
 			lent.use = math.round(meta.consumable.consumeTime / 0.05)
-		elseif meta.projectileSource then 
+		elseif meta.projectileSource then
 			local ammo
 			for i, v in inv.items do
-				if table.find(meta.projectileSource.ammoItemTypes, v.itemType) then 
+				if table.find(meta.projectileSource.ammoItemTypes, v.itemType) then
 					ammo = v.itemType
 					break
 				end
 			end
 
-			if ammo then 
+			if ammo then
 				local pmeta = ProjectileMeta[ammo]
 				local pos = (lplr.Character and lplr.Character.PrimaryPart and lplr.Character.PrimaryPart.Position or Vector3.zero) + Vector3.new(0, 2.25, 0)
 				local shootPosition = (CFrame.lookAlong(pos, CFrame.Angles(0, math.rad(lent.yaw + 90), math.rad(lent.pitch)).RightVector) * CFrame.new(Vector3.new(-BowConstants.RelX, -BowConstants.RelY, -BowConstants.RelZ)))
@@ -592,7 +592,7 @@ function handler:registerPackets(main)
 					validate = {
 						raycast = {
 							cameraPosition = {value = root.Position},
-                            cursorDirection = {value = dir}
+							cursorDirection = {value = dir}
 						},
 						targetPosition = {value = ent.root.Position},
 						selfPosition = {

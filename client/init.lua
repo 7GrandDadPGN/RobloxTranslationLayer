@@ -10,7 +10,7 @@ local main = {
 local queue = {}
 
 local function getName(path)
-	local tab = path:split('\\')
+	local tab = path:find('/') and path:split('/') or path:split('\\')
 	tab = tab[#tab]
 	return tab:sub(1, #tab - 4)
 end
@@ -124,8 +124,8 @@ task.spawn(function()
 		task.wait(1)
 	until main.loggedin
 
-	for _, handler in main.handlers do 
-		if handler.login then 
+	for _, handler in main.handlers do
+		if handler.login then
 			handler:login(main)
 		end
 	end

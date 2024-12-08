@@ -21,11 +21,11 @@ local SOUNDS = {
 }
 local NORMALS = {
 	[0] = Vector3.new(0, -1, 0),
-    [1] = Vector3.new(0, 1, 0),
-    [2] = Vector3.new(0, 0, -1),
-    [3] = Vector3.new(0, 0, 1),
-    [4] = Vector3.new(-1, 0, 0),
-    [5] = Vector3.new(1, 0, 0)
+	[1] = Vector3.new(0, 1, 0),
+	[2] = Vector3.new(0, 0, -1),
+	[3] = Vector3.new(0, 0, 1),
+	[4] = Vector3.new(-1, 0, 0),
+	[5] = Vector3.new(1, 0, 0)
 }
 local send, entity, gui
 
@@ -53,7 +53,7 @@ end
 local chestEntities = {}
 
 local function addChestEntity(chest)
-	if not chestEntities[chest] then 
+	if not chestEntities[chest] then
 		local part = Instance.new('Part')
 		part.CanCollide = false
 		part.Parent = lplr
@@ -65,14 +65,14 @@ local function addChestEntity(chest)
 		end)
 		entity:addEntity(part, 63)
 		chestEntities[chest] = part
-	end	
+	end
 end
 
 local function addChest(chest)
 	local folder = chest:FindFirstChild('ChestFolderValue')
 	if not folder then return end
 	folder = folder.Value
-	for _, item in folder:GetChildren() do 
+	for _, item in folder:GetChildren() do
 		if item.Name == 'speed_potion' then
 			addChestEntity(chest)
 		end
@@ -85,7 +85,7 @@ local function addChest(chest)
 	folder.ChildRemoved:Connect(function(item)
 		if item.Name == 'speed_potion' then
 			local ent = chestEntities[chest]
-			if ent then 
+			if ent then
 				chestEntities[chest] = nil
 				ent:Destroy()
 			end
@@ -124,7 +124,7 @@ function handler:start(main)
 	end)
 
 	local box = workspace:FindFirstChild('SpectatorPlatform')
-	if box then 
+	if box then
 		local part = Instance.new('Part')
 		part.Name = 'glass'
 		part.Position = (box.floor.Position // 3) * 3
@@ -173,8 +173,8 @@ local particleTime = tick()
 function handler:tick()
 	if particleTime < tick() then
 		particleTime = tick() + 0.2
-		for i, v in collectionService:GetTagged('bed') do 
-			if v:GetAttribute('BedPlating') or v:GetAttribute('BedShieldEndTime') then 
+		for i, v in collectionService:GetTagged('bed') do
+			if v:GetAttribute('BedPlating') or v:GetAttribute('BedShieldEndTime') then
 				send('world_particles', 13, 10, (v.Position / 3) + Vector3.new(0.5, 0.5, 1), Vector3.new(0.75, 0.25, 0.75))
 			end
 		end
@@ -309,17 +309,17 @@ function handler:registerPackets(main)
 			self.breakPosition = Vector3.new(buffer.readi32(data, 2), buffer.readi32(data, 6), buffer.readi32(data, 10))
 		elseif action == 1 then
 			self.breakPosition = nil
-		elseif action == 3 then 
+		elseif action == 3 then
 			local hand = ClientStore:getState().Inventory.observedInventory.inventory.hand
-			if hand then 
+			if hand then
 				Client:Get('DropItem'):CallServer({
-					item = hand.tool, 
+					item = hand.tool,
 					amount = hand.amount
 				})
 			end
-		elseif action == 4 then 
+		elseif action == 4 then
 			local hand = ClientStore:getState().Inventory.observedInventory.inventory.hand
-			if hand then 
+			if hand then
 				Client:Get('DropItem'):CallServer({item = hand.tool})
 			end
 		elseif action == 5 then
