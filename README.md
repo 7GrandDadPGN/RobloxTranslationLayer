@@ -1,5 +1,5 @@
-# MinibloxTranslationLayer
-A middle man to translate Miniblox packets into Minecraft 1.8.9 packets.
+# RobloxTranslationLayer
+A middle man to translate Roblox gameplay into Minecraft 1.8.9 packets.
 
 ## Use Steps
 1. Install the latest NodeJS at (https://nodejs.org/)
