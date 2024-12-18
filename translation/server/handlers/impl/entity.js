@@ -280,17 +280,23 @@ const self = class EntityHandler extends Handler {
 		// LOGIN
 		this.respawn();
 
-		client.on('flying', () => socket.send(CLIENT.move(this.local)));
+		client.on('flying', () => {
+			if (!socket) return;
+			socket.send(CLIENT.move(this.local));
+		});
 		client.on('position', ({ x, y, z } = {}) => {
+			if (!socket) return;
 			this.local.pos = {x: (x * 3) - 1.5, y: (y * 3) + 1.587, z: (z * 3) - 1.5};
 			socket.send(CLIENT.move(this.local));
 		});
 		client.on('look', ({ yaw, pitch } = {}) => {
+			if (!socket) return;
 			this.local.yaw = (yaw * -1) - 180;
 			this.local.pitch = (pitch * -1);
 			socket.send(CLIENT.move(this.local));
 		});
 		client.on('position_look', ({ x, y, z, onGround, yaw, pitch } = {}) => {
+			if (!socket) return;
 			this.local.pos = {x: (x * 3) - 1.5, y: (y * 3) + 1.587, z: (z * 3) - 1.5};
 			this.local.yaw = (yaw * -1) - 180;
 			this.local.pitch = (pitch * -1);
