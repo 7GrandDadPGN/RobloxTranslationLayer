@@ -40,22 +40,6 @@ const self = class TabListHandler extends Handler {
 				index++;
 			}
 		});
-		/*ClientSocket.on('CPacketUpdateScoreboard', packet => {
-			if (!this.score[packet.index]) return;
-			const name = translateText(packet.columns.join(' ')).slice(0, 40);
-			client.write('scoreboard_score', {
-				scoreName: 'scoreboard',
-				itemName: this.score[packet.index],
-				action: 1
-			});
-			client.write('scoreboard_score', {
-				scoreName: 'scoreboard',
-				itemName: name,
-				action: 0,
-				value: this.score.length - packet.index
-			});
-			this.score[packet.index] = name;
-		});*/
 	}
 	minecraft(mcClient) {
 		client = mcClient;

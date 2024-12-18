@@ -29,7 +29,14 @@ function handler:start(main)
 end
 
 function handler:update()
-	send('tablist', self.ids)
+	if self.loggedin then
+		send('tablist', self.ids)
+	end
+end
+
+function handler:login()
+	self.loggedin = true
+	self:update()
 end
 
 function handler:getId()

@@ -140,6 +140,7 @@ function handler:start(main)
 			local lagbacked = isnetworkowner and not isnetworkowner(root)
 			if ent.sentPos and (root.Position - ent.sentPos).Magnitude > 10 or lagbacked then
 				send('teleport', root.Position / 3, 0)
+				ent.velocity = Vector3.zero
 				if (ent.pos.Position - root.Position).Magnitude < 10 then
 					ent.lastPos = nil
 				else
@@ -365,7 +366,7 @@ function handler:addPlayerEntity(plr: Player, char: Model)
 				end
 
 				function entity:spawn()
-					if not self.spawned then
+					if not self.spawned and self.health > 0 then
 						self.spawned = true
 						send('entity_spawn', self.id, self.spawnType, self.pos, self.yaw)
 						send('entity_health', self.id, self.health)
@@ -448,9 +449,6 @@ function handler:addEntity(obj, spawnType)
 
 	self.entities[obj] = entity
 	self.entityIds[entity.id] = true
-	if self.loggedin then
-		entity:spawn()
-	end
 
 	obj.AncestryChanged:Connect(function(_, parent)
 		if parent == nil and self.entities[obj] then
@@ -547,6 +545,7 @@ function handler:login(main)
 	if root then
 		local aimVec = root.CFrame.LookVector
 		send('teleport', (root.Position / 3), math.floor((math.deg(math.atan2(aimVec.Z, aimVec.X)) - 90) % 360))
+		self:handleEntityMetadata(self.lchar)
 	end
 
 	tablist:update()
@@ -771,9 +770,9 @@ function handler:registerPackets(main)
 
 	main:registerServerPacket('teleport', function(pos, yaw)
 		local data = buffer.create(17)
-		buffer.writef32(data, 1, pos.X)
-		buffer.writef32(data, 5, pos.Y)
-		buffer.writef32(data, 9, pos.Z)
+		buffer.writef32(data, 1, pos.X + 0.5)
+		buffer.writef32(data, 5, pos.Y - 0.48)
+		buffer.writef32(data, 9, pos.Z + 0.5)
 		buffer.writef32(data, 13, yaw)
 		return data
 	end)

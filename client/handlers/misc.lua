@@ -170,7 +170,7 @@ end
 
 function handler:registerPackets(main)
 	main:registerClientPacket('chat', function(data)
-		local msg = buffer.readstring(data, 2, buffer.readu8(data, 1))
+		local msg = buffer.readstring(data, 2, buffer.readu8(data, 1)):lower()
 
 		if msg:sub(1, 4) == '/buy' then
 			local root = lplr.Character and lplr.Character.PrimaryPart
@@ -197,6 +197,9 @@ function handler:registerPackets(main)
 			local queueType = msg:find(' ') and msg:split(' ')[2] or ClientStore:getState().Game.queueType
 			KnitClient.Controllers.QueueController:joinQueue(queueType)
 			return
+		elseif msg:sub(1, 7) == '/cancel' then
+			KnitClient.Controllers.QueueController:leaveQueue()
+			return
 		elseif msg:sub(1, 7) == '/resync' then
 			entity.resync = true
 			return
@@ -208,7 +211,6 @@ function handler:registerPackets(main)
 	main:registerClientPacket('login', function(data)
 		main.loggedin = true
 	end)
-
 
 	for _, v in {'kick', 'chat'} do
 		main:registerServerPacket(v, function(msg)

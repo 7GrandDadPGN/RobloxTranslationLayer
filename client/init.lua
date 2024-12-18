@@ -10,9 +10,7 @@ local main = {
 local queue = {}
 
 local function getName(path)
-	local tab = path:find('/') and path:split('/') or path:split('\\')
-	tab = tab[#tab]
-	return tab:sub(1, #tab - 4)
+	return path:match("[\\/](%w+)%.lua")
 end
 
 function main:setup()

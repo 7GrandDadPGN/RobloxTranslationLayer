@@ -12,7 +12,7 @@ local getItemMeta = require(replicatedStorage.TS.item['item-meta']).getItemMeta
 local BLOCKS
 local CHUNK_SIZE = math.pow(16, 3)
 local BLANK_CHUNK = {palette = {}, cells = {}}
-local VIEW_DISTANCE = 7
+local VIEW_DISTANCE = 8
 local SOUNDS = {
 	wool = 'dig.cloth',
 	stone = 'dig.stone',
@@ -21,11 +21,11 @@ local SOUNDS = {
 }
 local NORMALS = {
 	[0] = Vector3.new(0, -1, 0),
-	[1] = Vector3.new(0, 1, 0),
-	[2] = Vector3.new(0, 0, -1),
-	[3] = Vector3.new(0, 0, 1),
-	[4] = Vector3.new(-1, 0, 0),
-	[5] = Vector3.new(1, 0, 0)
+    [1] = Vector3.new(0, 1, 0),
+    [2] = Vector3.new(0, 0, -1),
+    [3] = Vector3.new(0, 0, 1),
+    [4] = Vector3.new(-1, 0, 0),
+    [5] = Vector3.new(1, 0, 0)
 }
 local send, entity, gui
 
@@ -206,7 +206,7 @@ function handler:write(id, pos, block, update)
 		blockIndex = #chunk.palette
 	end
 
-	if update then
+	if update and self.loaded[chunkIndex] then
 		if type(id) == 'table' then
 			send('block_update', pos, bit32.bor(bit32.lshift(id[1], 4), id[2]))
 		else
@@ -225,7 +225,7 @@ function handler:writeNearbyChunks(pos)
 		for z = -VIEW_DISTANCE, VIEW_DISTANCE do
 			local ind = (start.X + x)..' '..(start.Z + z)
 			if not self.chunks[ind] then self.chunks[ind] = {palette = {}, cells = {{}}} end
-			if not self.loaded[ind] and self.chunks[ind] then
+			if not self.loaded[ind] then
 				self.loaded[ind] = true
 				send('chunk', start.X + x, start.Z + z, self.chunks[ind])
 			end
