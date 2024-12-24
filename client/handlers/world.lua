@@ -21,11 +21,11 @@ local SOUNDS = {
 }
 local NORMALS = {
 	[0] = Vector3.new(0, -1, 0),
-    [1] = Vector3.new(0, 1, 0),
-    [2] = Vector3.new(0, 0, -1),
-    [3] = Vector3.new(0, 0, 1),
-    [4] = Vector3.new(-1, 0, 0),
-    [5] = Vector3.new(1, 0, 0)
+	[1] = Vector3.new(0, 1, 0),
+	[2] = Vector3.new(0, 0, -1),
+	[3] = Vector3.new(0, 0, 1),
+	[4] = Vector3.new(-1, 0, 0),
+	[5] = Vector3.new(1, 0, 0)
 }
 local send, entity, gui
 
@@ -93,6 +93,17 @@ local function addChest(chest)
 	end)
 end
 
+local function writeFakeBlock(block, size, pos)
+	local start = pos - (size / 2) - Vector3.new(0.5, 0.5, 0.5)
+	for x = 0, size.X do
+		for y = 0, size.Y do
+			for z = 0, size.Z do
+				handler:write(BLOCKS[block] or 1, start + Vector3.new(x, y, z))
+			end
+		end
+	end
+end
+
 function handler:start(main)
 	self:registerPackets(main)
 	send = main.send
@@ -123,17 +134,9 @@ function handler:start(main)
 		send('explosion', data.position / 3)
 	end)
 
-	local box = workspace:FindFirstChild('SpectatorPlatform')
+	local box = workspace:FindFirstChild('SpectatorPlatform') or game.PlaceId == 6872265039 and {floor = {Size = Vector3.new(3000, 3, 3000), Position = Vector3.new(55, 291, 563)}}
 	if box then
-		local part = Instance.new('Part')
-		part.Name = 'glass'
-		part.Position = (box.floor.Position // 3) * 3
-		part.Size = (box.floor.Size // 3) * 3
-		part.Anchored = true
-		part.CanCollide = false
-		part.Parent = box
-		part:AddTag('block')
-		part:SetAttribute('NoBreak', true)
+		writeFakeBlock(box.floor.Name and 'glass' or 'grass', box.floor.Size // 3, box.floor.Position // 3)
 	end
 
 	task.spawn(function()
@@ -175,7 +178,7 @@ function handler:tick()
 		particleTime = tick() + 0.2
 		for i, v in collectionService:GetTagged('bed') do
 			if v:GetAttribute('BedPlating') or v:GetAttribute('BedShieldEndTime') then
-				send('world_particles', 13, 10, (v.Position / 3) + Vector3.new(0.5, 0.5, 1), Vector3.new(0.75, 0.25, 0.75))
+				send('world_particles', v:GetAttribute('BedShieldEndTime') and 12 or 13, 10, (v.Position / 3) + Vector3.new(0.5, 0.5, 1), Vector3.new(0.75, 0.25, 0.75))
 			end
 		end
 	end
