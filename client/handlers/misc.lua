@@ -4,7 +4,6 @@ local chat = lplr.PlayerGui:FindFirstChild('Chat')
 local replicatedStorage = game:GetService('ReplicatedStorage')
 local guiService = game:GetService('GuiService')
 local collectionService = game:GetService('CollectionService')
-local chatRemote = replicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest
 local Client = require(replicatedStorage.TS.remotes).default.Client
 local ClientStore = require(lplr.PlayerScripts.TS.ui.store).ClientStore
 local KnitClient = require(replicatedStorage.rbxts_include.node_modules["@easy-games"].knit.src).KnitClient
@@ -205,7 +204,7 @@ function handler:registerPackets(main)
 			return
 		end
 
-		chatRemote:FireServer(msg, 'All')
+		--chatRemote:FireServer(msg, 'All')
 	end)
 
 	main:registerClientPacket('login', function(data)
